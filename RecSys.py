@@ -132,7 +132,7 @@ UsersBestMovies=list(FindUsersBestMovies(UserId).items())
 
 film=FindFilm(Sim,UsersBestMovies)
 #print(film)
-dict2={ film: str(Mark(UserId,film))}
+dict2={ film: Mark(UserId,film)}
 print(dict2)
 dictForJson={"User":UserId, "1":dict1,"2":dict2}
 print(dictForJson)
