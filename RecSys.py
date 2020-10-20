@@ -14,7 +14,7 @@ CountMovies=count_col-1
 CountUsers=count_row
 k = 4
 UserId=29
-
+#UserId=35
 #Часть 1
 def FindMark(MovieInd,UserInd):
     AvgMarkU=AvgUserMark(UserInd)
@@ -44,7 +44,7 @@ def FindSim(UserInd):
                     SumV += data[" Movie " + str(i)][UserInd] ** 2
             res=numerator/(math.sqrt(SumU)*math.sqrt(SumV))
             SimDict[userV]=res
-    # Сортируем так, чтобы самые похожие были на верху
+    # Сортируем так, чтобы самые похожие были сверху
     list_d = list(SimDict.items())
     list_d.sort(key=lambda i: i[1],reverse=True)
     return list_d
@@ -75,14 +75,9 @@ def GiveRes(UserNum):
     return dict
 
 
-
-print("User "+str(UserId))
-dict1 = GiveRes(UserId)
-
-print(dict)
-
 #Часть 2
 
+#Словарь пользователей и их лучший фильм, который они посмотрели в выходные
 def FindUsersBestMovies(TargetUser):
     UserInd=TargetUser-1
     if UserInd < 0 and UserInd > CountUsers - 1:
@@ -113,21 +108,33 @@ def FindFilm(Sim,UsersBestMovies):
             if Sim[i][0]==UsersBestMovies[j][0]:
                 return UsersBestMovies[j][1]
 
+def Mark(TargetUser,film):
+    UserInd = TargetUser - 1
+    if UserInd < 0 and UserInd > CountUsers - 1:
+        return
+    if (data[film][UserInd]!=-1):
+        return data[film][UserInd]
+    else:
+        dict=GiveRes(TargetUser)
+        return dict[film]
 
+#Вызов первой части задания
+print("User "+str(UserId))
+dict1 = GiveRes(UserId)
+
+print(dict1)
+
+#Вызов второй части задания
 Sim=FindSim(UserId-1)
 UsersBestMovies=list(FindUsersBestMovies(UserId).items())
 #print(Sim)
 #print(UsersBestMovies)
 
 film=FindFilm(Sim,UsersBestMovies)
-print(film)
-
-
-dictForJson={}
-dictForJson["User"]=UserId
-dictForJson["1"]=dict1
-dictForJson["2"]=film
-
+#print(film)
+dict2={ film: str(Mark(UserId,film))}
+print(dict2)
+dictForJson={"User":UserId, "1":dict1,"2":dict2}
 print(dictForJson)
 
 #app_json = json.dumps(dictForJson)
