@@ -113,7 +113,8 @@ def Mark(TargetUser,film):
     if UserInd < 0 and UserInd > CountUsers - 1:
         return
     if (data[film][UserInd]!=-1):
-        return data[film][UserInd]
+        #print( type(data[film][UserInd]))
+        return int(data[film][UserInd])
     else:
         dict=GiveRes(TargetUser)
         return dict[film]
@@ -137,9 +138,10 @@ print(dict2)
 dictForJson={"User":UserId, "1":dict1,"2":dict2}
 print(dictForJson)
 
-#app_json = json.dumps(dictForJson)
-#print(app_json)
 
 with open('Var29.json', 'w') as json_file:
   json.dump(dictForJson, json_file)
 
+
+#app_json = json.dumps(dictForJson)
+#print(app_json)
