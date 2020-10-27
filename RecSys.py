@@ -5,28 +5,27 @@ import json
 data = pd.read_csv('data.csv')
 context_day=pd.read_csv('context_day.csv')
 context_place=pd.read_csv('context_place.csv')
-#print(data)
 
 count_row = data.shape[0]  # gives number of row count
 count_col = data.shape[1]  # gives number of col count
 
-print(count_col)
-print(data[" Movie "+str(count_col-1)][0])
 CountMovies=count_col-1
 CountUsers=count_row
 k = 4
 UserId=29
-#UserId=35
+
 #Часть 1
 def FindMark(MovieInd,UserInd):
     AvgMarkU=AvgUserMark(UserInd)
     numerator=0
     denominator=0
     FourSim=FindSim(UserInd)[:k]#берем только 4 самых похожих
-   # print(FourSim)
+    #print(FourSim)
     for i in range(0,k):
-        numerator+=FourSim[i][1]* (data[" Movie "+str(MovieInd)][FourSim[i][0]]-AvgUserMark(FourSim[i][0]))
-        denominator+=math.fabs(FourSim[i][1])
+        if (data[" Movie "+str(MovieInd)][FourSim[i][0]])!=-1:#вот моя проблема))
+            numerator+=FourSim[i][1]* (data[" Movie "+str(MovieInd)][FourSim[i][0]]-AvgUserMark(FourSim[i][0]))
+            #print(" Movie "+str(MovieInd),FourSim[i][1],data[" Movie "+str(MovieInd)][FourSim[i][0]],AvgUserMark(FourSim[i][0]),FourSim[i][0] )
+            denominator+=math.fabs(FourSim[i][1])
     mark=AvgMarkU+numerator/denominator
     return mark
 
@@ -43,15 +42,15 @@ def FindSim(UserInd):
                     m += 1
                     numerator+=data[" Movie " + str(i)][UserInd] * data[" Movie " + str(i)][userV]
                     #print( data[" Movie " + str(i)][UserInd] * data[" Movie " + str(i)][UserInd])
-                    SumU =SumU+ data[" Movie " + str(i)][UserInd] * data[" Movie " + str(i)][UserInd]
-                    SumV =SumV+ data[" Movie " + str(i)][userV] * data[" Movie " + str(i)][userV]
+                    SumU =SumU+ data[" Movie " + str(i)][UserInd] ** 2
+                    SumV =SumV+ data[" Movie " + str(i)][userV] ** 2
             res=numerator/(math.sqrt(SumU)*math.sqrt(SumV))
             #print(data[UserInd:UserInd+1].values[0][1:])
             #print(data[userV:userV + 1].values[0][1:])
             #print(numerator)
             #print(SumU)
             #print(SumV)
-            SimDict[userV]=res
+            SimDict[userV]=res#Здесь индекс юзера, а не номер
             numerator = 0
             SumU = 0
             SumV = 0
@@ -71,8 +70,6 @@ def AvgUserMark(UserInd):
         if mark!=-1:
             res += mark
             count += 1
-
-
     if(count!=0):
         return res/count
     return 0 #Что возвращать, если у пользователя везде будет -1?
