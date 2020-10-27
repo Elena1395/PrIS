@@ -10,6 +10,8 @@ context_place=pd.read_csv('context_place.csv')
 count_row = data.shape[0]  # gives number of row count
 count_col = data.shape[1]  # gives number of col count
 
+print(count_col)
+print(data[" Movie "+str(count_col-1)][0])
 CountMovies=count_col-1
 CountUsers=count_row
 k = 4
@@ -21,7 +23,7 @@ def FindMark(MovieInd,UserInd):
     numerator=0
     denominator=0
     FourSim=FindSim(UserInd)[:k]#берем только 4 самых похожих
-    #print(FourSim)
+   # print(FourSim)
     for i in range(0,k):
         numerator+=FourSim[i][1]* (data[" Movie "+str(MovieInd)][FourSim[i][0]]-AvgUserMark(FourSim[i][0]))
         denominator+=math.fabs(FourSim[i][1])
@@ -40,24 +42,37 @@ def FindSim(UserInd):
                 if (data[" Movie " + str(i)][UserInd] != -1 and data[" Movie " + str(i)][userV] != -1):
                     m += 1
                     numerator+=data[" Movie " + str(i)][UserInd] * data[" Movie " + str(i)][userV]
-                    SumU += data[" Movie " + str(i)][UserInd] ** 2
-                    SumV += data[" Movie " + str(i)][UserInd] ** 2
+                    #print( data[" Movie " + str(i)][UserInd] * data[" Movie " + str(i)][UserInd])
+                    SumU =SumU+ data[" Movie " + str(i)][UserInd] * data[" Movie " + str(i)][UserInd]
+                    SumV =SumV+ data[" Movie " + str(i)][userV] * data[" Movie " + str(i)][userV]
             res=numerator/(math.sqrt(SumU)*math.sqrt(SumV))
+            #print(data[UserInd:UserInd+1].values[0][1:])
+            #print(data[userV:userV + 1].values[0][1:])
+            #print(numerator)
+            #print(SumU)
+            #print(SumV)
             SimDict[userV]=res
+            numerator = 0
+            SumU = 0
+            SumV = 0
     # Сортируем так, чтобы самые похожие были сверху
     list_d = list(SimDict.items())
+    #print(list_d)
     list_d.sort(key=lambda i: i[1],reverse=True)
+    #print(list_d)
     return list_d
 
 
 def AvgUserMark(UserInd):
-    count=0;
+    count=0
     res=0
     for i in range(1, count_col):
         mark=data[" Movie "+str(i)][UserInd]
         if mark!=-1:
-            res+=mark
-            count+=1
+            res += mark
+            count += 1
+
+
     if(count!=0):
         return res/count
     return 0 #Что возвращать, если у пользователя везде будет -1?
@@ -71,7 +86,7 @@ def GiveRes(UserNum):
     for i in range(1, count_col):
         if data[" Movie "+str(i)][UserIndex]==-1:
             mark = FindMark(i,UserIndex)
-            dict[" Movie " + str(i)]=round(mark,2)
+            dict[" Movie " + str(i)]=round(mark,3)
     return dict
 
 
